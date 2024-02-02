@@ -69,12 +69,13 @@ fn check_poll_length(poll_data: &BTreeMap<String, Vec<i32>>) -> Result<(), &str>
 ///
 /// # Returns
 /// * `BTreeMap<String, i32>`: a BTreeMap with ranked items/candidates and their ranking
-fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> BTreeMap<&String, u32> {
+fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> BTreeMap<&String, Vec<u32>> {
 
     let _ = check_poll_length(&poll_data);
 
     let mut majority_values = BTreeMap::new();
     for (item, grades) in poll_data {
+        println!("{:?}", item);
         // majority_values.insert(item, compute_frequency_of_grades(grades.to_vec()));
         majority_values.insert(item, compute_majority_values(grades.to_vec()));
     }
@@ -86,33 +87,52 @@ fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> BTreeMap<&String
     return majority_values
 }
 
-fn compute_majority_values(grades: Vec<i32>) -> u32 {
+fn compute_majority_values(grades: Vec<i32>) -> Vec<u32> {
     let mut count_number_of_grades: BTreeMap<i32, i32> = BTreeMap::new();
     let tally = compute_frequency_of_grades(grades.clone());
     println!("{:?}", tally);
-    let keys = tally.keys();
-    let values = tally.values();
+    let keys = tally.keys().collect::<Vec<&i32>>();
+    println!("{:?}", keys);
+    let mut values = tally.values().collect::<Vec<&i32>>().iter().map(|&x| *x).collect::<Vec<i32>>();
 
     let total_votes = grades.len() as u32;
 
     let mut total : i32 = 0;
-    // let mut cumsum : i32 = 0;
     let mut idx : u32 = 0;
 
+    let mut majority_values : Vec<u32> = Vec::new();
+
     for _ in (0..total_votes) {
-        total = values.clone().sum();
+        println!("values before: {:?}", values);
+        total = values.clone().into_iter().sum();
         let mut total_f32 = total as f32;
 
-        let values_f32: Vec<f32> = values.clone().into_iter().map(|x| *x as f32).collect();
+        let values_f32: Vec<f32> = values.clone().into_iter().map(|x| x as f32).collect();
         let cumsum: Vec<f32> = values_f32.clone().into_iter().scan(0.0, |sum, val| {
             *sum += val / total_f32;
             Some(*sum)
         }).collect();
 
+        println!("cumsum is: {:?}", cumsum);
+
         idx = median_grade(cumsum);
+
+        println!("index is: {:?}", idx);
+        majority_values.push(keys.get(idx as usize).unwrap().clone().to_owned().try_into().unwrap());
+
+        // remove median grade of the total count of votes
+        // by changing removing a counted vote in the value vector at index idx
+        values = values.into_iter().enumerate().map(|(i, x)| {
+            if i == idx as usize {
+                x - 1
+            } else {
+                x
+            }
+        }).collect::<Vec<_>>();
+        println!("values after removing the median grade: {:?}", values);
     }
 
-    return idx
+    return majority_values
 
 }
 
