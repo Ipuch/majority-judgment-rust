@@ -26,7 +26,7 @@ fn main() {
             vote)
     );
 
-    majority_judgment(&poll_data);
+    println!("{:?}",majority_judgment(&poll_data));
 }
 
 /// Function that checks that all the lengths of the polls are the same otherwise it throws an error
@@ -69,21 +69,24 @@ fn check_poll_length(poll_data: &BTreeMap<String, Vec<i32>>) -> Result<(), &str>
 ///
 /// # Returns
 /// * `BTreeMap<String, i32>`: a BTreeMap with ranked items/candidates and their ranking
-fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> BTreeMap<&String, Vec<u32>> {
+fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> Vec<(&String, usize)> {
 
     let _ = check_poll_length(&poll_data);
 
     let mut majority_values = BTreeMap::new();
     for (item, grades) in poll_data {
-        println!("{:?}", item);
-        // majority_values.insert(item, compute_frequency_of_grades(grades.to_vec()));
         majority_values.insert(item, compute_majority_values(grades.to_vec()));
     }
-    println!("{:?}", majority_values);
 
-    // TODO: Compute rank scores from majority values of each candidate
-    // TODO: Rank the candidates
-    return majority_values
+    let mut majority_values_vec: Vec<(&&String, &Vec<u32>)> = majority_values.iter().collect();
+    majority_values_vec.sort_by(|a, b| b.1.partial_cmp(a.1).unwrap());
+
+    let mut final_ranking:Vec<(&String, usize)> = Vec::new();
+    for (rank, (item, _)) in majority_values_vec.iter().enumerate() {
+        final_ranking.push((item, rank));
+    }
+
+    return final_ranking
 }
 
 /// This function computes the median grades, when each time withdrawing the median grade.
@@ -116,7 +119,13 @@ fn compute_majority_values(grades: Vec<i32>) -> Vec<u32> {
 
         let idx: u32 = median_grade(cumsum);
 
-        majority_values.push(keys.get(idx as usize).unwrap().clone().to_owned().try_into().unwrap());
+        // extra safeguard to prevent panic because no key found at the given index.
+        if let Some(key) = keys.get(idx as usize) {
+            let key_clone = (**key).clone();
+            majority_values.push(key_clone.try_into().unwrap());
+        } else {
+            println!("No key found at index {}", idx);
+        }
 
         // remove median grade of the total count of votes
         // by changing removing a counted vote in the value vector at index idx
@@ -127,7 +136,6 @@ fn compute_majority_values(grades: Vec<i32>) -> Vec<u32> {
                 x
             }
         }).collect::<Vec<_>>();
-        println!("values after removing the median grade: {:?}", values);
     }
     return majority_values
 }
