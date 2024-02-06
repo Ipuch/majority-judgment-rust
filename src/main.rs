@@ -1,3 +1,8 @@
+//! # Majority Judgment
+//! This is a simple implementation of the Majority Judgment voting system.
+//! The Majority Judgment is a voting system that was proposed by Michel Balinski and Rida Laraki.
+//! It is a single-winner voting system that selects the candidate who has the highest median grade.
+
 use std::collections::BTreeMap;
 
 
@@ -65,7 +70,7 @@ fn check_poll_length(poll_data: &BTreeMap<String, Vec<i32>>) -> Result<(), &str>
 /// * `poll_data`: a BTreeMap<String, Vec<i32>> with the poll data
 ///
 /// # Returns
-/// * `BTreeMap<String, i32>`: a BTreeMap with ranked items/candidates and their ranking
+/// * `Vec<(&String, usize)>`: a vector of tuple with the candidate and its rank
 fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> Vec<(&String, usize)> {
 
     let _ = check_poll_length(&poll_data);
