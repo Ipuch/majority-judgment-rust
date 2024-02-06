@@ -3,30 +3,27 @@ use std::collections::BTreeMap;
 
 fn main() {
 
-    // This is two options did not work
+    // Declare a BTreeMap with the poll data
     let mut poll_data : BTreeMap<String, Vec<i32> > = BTreeMap::new();
-    // let poll_data = HashMap::new();
-    // let mut poll_data = HashMap::new();
+
     poll_data.insert("Pizza".to_string(), vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3]);
     poll_data.insert("Chips".to_string(), vec![0, 1, 0, 2, 1, 2, 2, 3, 2, 3]);
     poll_data.insert("Pasta".to_string(), vec![0, 1, 0, 1, 2, 1, 3, 2, 3, 3]);
     poll_data.insert("Bread".to_string(), vec![0, 1, 2, 1, 1, 2, 1, 2, 2, 3]);
 
-    println!("{:?}", poll_data);
-    let _ = check_poll_length(&poll_data);
+    println!("Data: {:?}", poll_data);
+    println!("Results as a vector of tuple (Candidate, Rank): {:?}",majority_judgment(&poll_data));
 
+    // Extra tests
+    // let _ = check_poll_length(&poll_data);
+
+    // This would make the program panic
     // poll_data.insert("Salad".to_string(), vec![0, 1, 2, 1]);
     // let the_error = check_poll_length(&poll_data);
     // println!("{:?}", the_error);
 
-    let vote: Vec<i32> = vec![0, 1, 2, 1, 1, 2, 1, 2, 2, 3];
-    println!(
-        "{:?}",
-        compute_frequency_of_grades(
-            vote)
-    );
-
-    println!("{:?}",majority_judgment(&poll_data));
+    // let vote: Vec<i32> = vec![0, 1, 2, 1, 1, 2, 1, 2, 2, 3];
+    // println!("Frequency of grades: {:?}", compute_frequency_of_grades(vote));
 }
 
 /// Function that checks that all the lengths of the polls are the same otherwise it throws an error
