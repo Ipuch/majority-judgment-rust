@@ -14,7 +14,7 @@ Collect the **votes** for each Candidate and provide them in the function `major
 
 ```rust
 // Declare a BTreeMap with the poll data
-let mut poll_data : BTreeMap<String, Vec<i32> > = BTreeMap::new();
+let mut poll_data : BTreeMap<String, Vec<u8> > = BTreeMap::new();
 
 poll_data.insert("Pizza".to_string(), vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3]);
 poll_data.insert("Chips".to_string(), vec![0, 1, 0, 2, 1, 2, 2, 3, 2, 3]);
