@@ -194,6 +194,12 @@ fn group_by<T: PartialEq + Clone>(vector: Vec<T>) -> Vec<Vec<T>> {
 ///
 /// # Returns
 /// * u32, the index of the median grade
+///
+/// # Note
+/// - This is not exactly the median grade, but the index of the median grade
+///     if the number of element is even, it will return the index  (n/2 - 1)  and not the value of the median grade
+/// - Plus, it is found based on a cumulative sum of grades,
+///     so we always try to find the 0.5 value to return the median grade index
 fn median_grade(cumsum_vec: Vec<f32>) -> u32 {
     // too strict when sometimes I get a 1.000001
     // verify the last element is a 1
