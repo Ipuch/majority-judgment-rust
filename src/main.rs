@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 fn main() {
 
     // Declare a BTreeMap with the poll data
-    let mut poll_data : BTreeMap<String, Vec<i32> > = BTreeMap::new();
+    let mut poll_data : BTreeMap<String, Vec<u8> > = BTreeMap::new();
 
     poll_data.insert("Pizza".to_string(), vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3]);
     poll_data.insert("Chips".to_string(), vec![0, 1, 0, 2, 1, 2, 2, 3, 2, 3]);
@@ -27,7 +27,7 @@ fn main() {
     // let the_error = check_poll_length(&poll_data);
     // println!("{:?}", the_error);
 
-    // let vote: Vec<i32> = vec![0, 1, 2, 1, 1, 2, 1, 2, 2, 3];
+    // let vote: Vec<u8> = vec![0, 1, 2, 1, 1, 2, 1, 2, 2, 3];
     // println!("Frequency of grades: {:?}", compute_frequency_of_grades(vote));
 }
 
@@ -54,7 +54,7 @@ fn main() {
 /// check_poll_length(&poll_data);
 /// ```
 ///
-fn check_poll_length(poll_data: &BTreeMap<String, Vec<i32>>) -> Result<(), &str> {
+fn check_poll_length(poll_data: &BTreeMap<String, Vec<u8>>) -> Result<(), &str> {
     let first_poll_length = poll_data.values().next().unwrap().len();
     for poll in poll_data.values() {
         if poll.len() != first_poll_length {
@@ -67,11 +67,11 @@ fn check_poll_length(poll_data: &BTreeMap<String, Vec<i32>>) -> Result<(), &str>
 
 /// Function that calculates the majority judgment of a poll
 /// # Arguments
-/// * `poll_data`: a BTreeMap<String, Vec<i32>> with the poll data
+/// * `poll_data`: a BTreeMap<String, Vec<u8>> with the poll data
 ///
 /// # Returns
 /// * `Vec<(&String, usize)>`: a vector of tuple with the candidate and its rank
-fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> Vec<(&String, usize)> {
+fn majority_judgment(poll_data: &BTreeMap<String, Vec<u8>>) -> Vec<(&String, usize)> {
 
     let _ = check_poll_length(&poll_data);
 
@@ -94,22 +94,22 @@ fn majority_judgment(poll_data: &BTreeMap<String, Vec<i32>>) -> Vec<(&String, us
 /// This function computes the median grades, when each time withdrawing the median grade.
 /// It provides a simple efficient way to rank candidates even if the initial median grade is the same.
 /// # Arguments
-/// * grades: Vec<i32> all the collected grades unsorted
+/// * grades: Vec<u8> all the collected grades unsorted
 ///
 /// # Returns
 /// * Vec<u32> The consecutive median grades when withdrawing the previous one
-fn compute_majority_values(grades: Vec<i32>) -> Vec<u32> {
+fn compute_majority_values(grades: Vec<u8>) -> Vec<u32> {
 
     let tally = compute_frequency_of_grades(grades.clone());
 
-    let keys = tally.keys().collect::<Vec<&i32>>();
-    let mut values = tally.values().collect::<Vec<&i32>>().iter().map(|&x| *x).collect::<Vec<i32>>();
+    let keys = tally.keys().collect::<Vec<&u8>>();
+    let mut values = tally.values().collect::<Vec<&u32>>().iter().map(|&x| *x).collect::<Vec<u32>>();
     let total_votes = grades.len() as u32;
 
     let mut majority_values : Vec<u32> = Vec::new();
 
     for _ in 0..total_votes {
-        let total: i32 = values.clone().into_iter().sum();
+        let total: u32 = values.clone().into_iter().sum();
         let total_f32 = total as f32;
 
         let values_f32: Vec<f32> = values.clone().into_iter().map(|x| x as f32).collect();
@@ -145,13 +145,13 @@ fn compute_majority_values(grades: Vec<i32>) -> Vec<u32> {
 /// Function that compute the frequency of each grade in BTreeMap structure
 ///
 /// # Arguments
-/// * `grades`:  Vec<i32> unsorted numbers representing the grades
+/// * `grades`:  Vec<u8> unsorted numbers representing the grades
 ///
 /// # Returns
-/// * BTreeMap<i32, i32>, first is the grade, the second is the number of time, it has been given
+/// * BTreeMap<u8, u32>, first is the grade, the second is the number of time, it has been given
 ///
-fn compute_frequency_of_grades(mut grades: Vec<i32>) -> BTreeMap<i32, i32> {
-    let mut tally: BTreeMap<i32, i32> = BTreeMap::new();
+fn compute_frequency_of_grades(mut grades: Vec<u8>) -> BTreeMap<u8, u32> {
+    let mut tally: BTreeMap<u8, u32> = BTreeMap::new();
 
     grades.sort();
     let grades_group = group_by(grades);
