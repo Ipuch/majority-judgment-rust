@@ -214,3 +214,78 @@ fn median_grade(cumsum_vec: Vec<f32>) -> u32 {
     }
     return cumsum_vec.len() as u32 - 1u32
 }
+
+
+mod tests {
+use super::*;
+
+    #[test]
+    fn calling_check_poll_length() {
+        let mut poll_data = BTreeMap::new();
+        poll_data.insert("Pizza".to_string(), vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3]);
+        poll_data.insert("Chips".to_string(), vec![0, 1, 0, 2, 1, 2, 2, 3, 2, 3]);
+        let _ = check_poll_length(&poll_data);
+    }
+
+    #[test]
+    fn calling_majority_judgment() {
+        let mut poll_data: BTreeMap<String, Vec<u8>> = BTreeMap::new();
+
+        poll_data.insert("Pizza".to_string(), vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3]);
+        poll_data.insert("Chips".to_string(), vec![0, 1, 0, 2, 1, 2, 2, 3, 2, 3]);
+        poll_data.insert("Pasta".to_string(), vec![0, 1, 0, 1, 2, 1, 3, 2, 3, 3]);
+        poll_data.insert("Bread".to_string(), vec![0, 1, 2, 1, 1, 2, 1, 2, 2, 3]);
+
+        let result = majority_judgment(&poll_data);
+        assert_eq!(
+            result,
+            vec![(&"Chips".to_string(), 0),
+                 (&"Pasta".to_string(), 1),
+                 (&"Bread".to_string(), 2),
+                 (&"Pizza".to_string(), 3)]);
+    }
+
+    #[test]
+    fn calling_compute_majority_values() {
+        let grades = vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3, 3, 3, 3, 3, 2, 1, 7 ,8];
+        let result = compute_majority_values(grades);
+        assert_eq!(result, vec![2, 3, 2, 3, 2, 3, 1, 3, 1, 3, 0, 3, 0, 3, 0, 7, 0, 8]);
+    }
+
+    #[test]
+    fn calling_compute_frequency_of_grades() {
+        let grades = vec![0, 0, 3, 0, 2, 0, 3, 1, 2, 3, 3, 3, 3, 3, 2, 1, 7 ,8];
+        let result = compute_frequency_of_grades(grades);
+        let mut expected = BTreeMap::new();
+        expected.insert(0, 4);
+        expected.insert(1, 2);
+        expected.insert(2, 3);
+        expected.insert(3, 7);
+        expected.insert(7, 1);
+        expected.insert(8, 1);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn calling_group_by() {
+        let grades = vec![0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 7, 8];
+        let result = group_by(grades);
+        let expected = vec![vec![0, 0, 0, 0], vec![1, 1], vec![2, 2, 2], vec![3, 3, 3, 3, 3, 3, 3], vec![7], vec![8]];
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn calling_median_grade() {
+        let cumsum_vec = vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.51, 0.52, 0.6, 0.7, 0.8, 0.9, 1.0];
+        let result = median_grade(cumsum_vec);
+        assert_eq!(result, 5);
+
+        let cumsum_vec = vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.51, 0.52, 0.6, 0.7, 0.8, 0.9, 0.99, 1.0];
+        let result = median_grade(cumsum_vec);
+        assert_eq!(result, 5);
+
+        let cumsum_vec = vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.41, 0.43, 0.45, 0.5, 1.0];
+        let result = median_grade(cumsum_vec);
+        assert_eq!(result, 8);
+    }
+}
